@@ -40,8 +40,12 @@ The requirements for the deployed platform are:
 - Consider the performance of the system in terms of load and IO operations
 
 
+## Security
+The Nextcloud platform allows to 
 
+password_security.sh file 
 
+Or directly from the User Interface: "" # TODO add instructions
 
 
 
