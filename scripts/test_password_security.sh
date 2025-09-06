@@ -5,7 +5,7 @@ CONTAINER_NAME=filestoragesystem-nextcloud-1
 TEST_USER=testuser
 GOOD_PASSWORD='Goskfnb@1dbshad!'
 BAD_PASSWORDS=(
-  "1awjs@"                   # too short
+  "1awjs@"                # too short
   "nouupercase1!"         # no uppercase
   "NonumberS!"            # no number
   "NoSpecialChars123"     # no special character
@@ -53,7 +53,7 @@ else
   echo "$OUTPUT"
 fi
 
-# Test login failures (lockout)
+# Test login failures 
 echo
 echo "Simulating failed login attempts to test account lockout..."
 

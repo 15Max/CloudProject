@@ -4,6 +4,8 @@ This repository contains the final project for the Cloud Basic Course, taught at
 
 # Cloud Based File Storage System
 
+## Task Description
+
 The task is to identify, deploy and implement a cloud-based file storage system. The system should allow users to upload, download, and delete files. Each user should have a private storage space. The system should be scalable, secure, and cost-efficient. 
 The requirements for the deployed platform are: 
 
@@ -39,6 +41,20 @@ The requirements for the deployed platform are:
 **Test the infrastructure:**
 - Consider the performance of the system in terms of load and IO operations
 
+## Project 
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ## Security
 The Nextcloud platform allows to 
@@ -65,4 +81,4 @@ Or directly from the User Interface: "" # TODO add instructions
 ## Author
 [**Marta Lucas**](https://github.com/15Max)
 
-Check out the [presentation](https://github.com/15Max/CloudProject/presentation) for a quick overview of the project.
+Check out the [presentation](https://github.com/15Max/CloudProject/presentation) for a quick overview of the project.  #TODO add correct link
