@@ -18,21 +18,13 @@ echo "Requiring special characters"
 docker exec -u www-data $CONTAINER_NAME php occ config:app:set password_policy enforceSpecialCharacters --value=true --type=boolean --no-interaction
 
 echo "Enabling password expiration after 30 days"
-docker exec -u www-data $CONTAINER_NAME php occ config:app:set password_policy enforceExpiry --value=true --type=boolean --no-interaction
-docker exec -u www-data $CONTAINER_NAME php occ config:app:set password_policy enforceExpiryDays --value=30 --type=integer --no-interaction
+docker exec -u www-data $CONTAINER_NAME php occ config:app:set password_policy expiration --value=30 --type=integer --no-interaction
 
 echo "Enabling lockout after 5 failed login attempts"
-docker exec -u www-data $CONTAINER_NAME php occ config:app:set password_policy enforceLoginLimit --value=true --type=boolean --no-interaction
-docker exec -u www-data $CONTAINER_NAME php occ config:app:set password_policy enforceLoginLimitAttempts --value=5 --type=integer --no-interaction
-
-echo
-echo "Verifying applied configuration..."
-docker exec -u www-data $CONTAINER_NAME php occ config:list password_policy --private
+docker exec -u www-data $CONTAINER_NAME php occ config:app:set password_policy maximumLoginAttempts --value=5 --type=integer --no-interaction
 
 echo
 echo "Restarting container to apply settings..."
 docker restart $CONTAINER_NAME
 
 echo "Password policy configured successfully."
-
-
