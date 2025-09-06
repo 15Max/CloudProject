@@ -4,7 +4,7 @@
 CONTAINER_NAME=filestoragesystem-nextcloud-1
 
 # Total number of users to delete
-NUMBER_OF_USERS=50  # Adjust this if the range changes
+NUMBER_OF_USERS=80  # Adjust this if the range changes
 
 echo "Starting user deletion process..."
 

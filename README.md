@@ -41,17 +41,16 @@ The requirements for the deployed platform are:
 **Test the infrastructure:**
 - Consider the performance of the system in terms of load and IO operations
 
-## Project 
+## Project Documentation
 
 
 
+Use `docker-compose up` to start the containers.
 
 
-
-
-
-
-
+## Locust
+Make sure you have python and pip installed , then proceed to add locust with the following command:
+`pip install locust`.
 
 
 
