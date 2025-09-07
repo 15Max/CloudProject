@@ -70,7 +70,7 @@ class NextcloudUser(HttpUser):
             self.client.put(remote_path, data=file, auth=self.auth, name="/remote.php/dav/files/[user]/file1MB")
 
 
-    @task(1)
+    @task(2)
     def load_file_1GB(self):
         base_path = os.path.dirname(__file__)
         file_path = os.path.join(base_path, "..", "test_files", "file1GB")
