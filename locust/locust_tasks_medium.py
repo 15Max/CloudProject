@@ -21,8 +21,12 @@ class NextcloudUser(HttpUser):
 
     @task(4)
     def search(self):
-        response = self.client.request("PROPFIND", f"/remote.php/dav/files/{self.user_name}/", auth=self.auth)
-        print(response.text)
+        self.client.request(
+            "PROPFIND",
+            f"/remote.php/dav/files/{self.user_name}/",
+            auth=self.auth,
+            name="/remote.php/dav/files/[user]/ PROPFIND"
+        )
     
     # Searches for the file Readme.md in the user's directory which is loaded by default in Nextcloud 
     @task(4)
