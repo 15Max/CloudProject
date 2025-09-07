@@ -3,7 +3,7 @@
 CONTAINER_NAME="filestoragesystem-nextcloud-1"
 
 # Total number of users to clear storage for
-NUMBER_OF_USERS=80  
+NUMBER_OF_USERS=100
 
 echo "Starting user storage clearing process..."
 

@@ -3,7 +3,7 @@
 CONTAINER_NAME=filestoragesystem-nextcloud-1
 SPACE_QUOTA="4G"
 GROUP="Users"
-NUMBER_OF_USERS=80
+NUMBER_OF_USERS=100
 
 for i in $(seq 1 $NUMBER_OF_USERS); do
   USERNAME="test_user$i"
