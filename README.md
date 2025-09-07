@@ -55,7 +55,7 @@ The following sections will guide you through the setup and usage of the cloud-b
 Use `docker-compose up -d` to start the containers.
 This will start the following services:
 - [Nextcloud:](https://nextcloud.com/) the main application for file storage and management
-- [MariaDB:](https://mariadb.org/) a drop in replacement for MySQL, offering better performance and features 
+- [MariaDB:](https://mariadb.org/) a drop in replacement for SQL lite, offering better performance and features
 
 Once the containers are up and running you can access Nextcloud at `http://localhost:8080`. The default Nextcloud admin credentials are present in the [.env](.env) file.
 In this case the username is `admin` and the password is `SecureAdmin15$`.
