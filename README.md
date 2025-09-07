@@ -135,7 +135,6 @@ In the [results](results) folder you can find a selection of graphs and statisti
 
 - *Test 1* : Light load with 80 users, spawn rate 1 user/s, run time 5 minutes
 - *Test 2* : Medium load with 80 users, spawn rate 1 user/s, run time 5 minutes
-- *Test 2.1* : Medium load with 40 users, spawn rate 1 user/s, run time 5 minutes
 - *Test 3* : Heavy load with 20 users, spawn rate 1 user/s, run time 5 minutes
 
 ## Author
