@@ -38,7 +38,7 @@ class NextcloudUser(HttpUser):
     def delete_file(self):
         url = f"/remote.php/dav/files/{self.user_name}/Testfile.md"
         file_content = b"x"  # 1 byte
-        self.client.put(url, data=file_content, auth=self.auth, name="/remote.php/dav/files/[user]/Testfile.md PUT")
+        self.client.put(url, data=file_content, auth=self.auth, name="PUT /upload")
         time.sleep(0.2) # simulate a short delay
         # Delete the newly created file
         self.client.delete(url, auth=self.auth, name="/remote.php/dav/files/[user]/Testfile.md DELETE")
@@ -56,7 +56,7 @@ class NextcloudUser(HttpUser):
 
         remote_path = f"/remote.php/dav/files/{self.user_name}/file1KB"
         with open(file_path, "rb") as file:
-            self.client.put(remote_path, data=file, auth=self.auth, name="/remote.php/dav/files/[user]/file1KB")
+            self.client.put(remote_path, data=file, auth=self.auth, name="PUT /upload")
 
 
     @task(5)
@@ -72,7 +72,7 @@ class NextcloudUser(HttpUser):
 
         remote_path = f"/remote.php/dav/files/{self.user_name}/file1MB"
         with open(file_path, "rb") as file:
-            self.client.put(remote_path, data=file, auth=self.auth, name="/remote.php/dav/files/[user]/file1MB")
+            self.client.put(remote_path, data=file, auth=self.auth, name="PUT /upload")
 
 
 

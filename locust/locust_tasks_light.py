@@ -42,7 +42,7 @@ class NextcloudUser(HttpUser):
         file_content = b"x"  # 1 byte
         time.sleep(0.2) # simulate a short delay
 
-        self.client.put(url, data=file_content, auth=self.auth, name="/remote.php/dav/files/[user]/Testfile.md PUT")
+        self.client.put(url, data=file_content, auth=self.auth, name= "PUT /upload")
         self.client.delete(url, auth=self.auth, name="/remote.php/dav/files/[user]/Testfile.md DELETE")
 
 
@@ -59,6 +59,6 @@ class NextcloudUser(HttpUser):
 
         remote_path = f"/remote.php/dav/files/{self.user_name}/file1KB"
         with open(file_path, "rb") as file:
-            self.client.put(remote_path, data=file, auth=self.auth, name="/remote.php/dav/files/[user]/file1KB")
+            self.client.put(remote_path, data=file, auth=self.auth, name="PUT /upload")
 
 
