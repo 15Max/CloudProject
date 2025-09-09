@@ -127,7 +127,7 @@ Then, open your browser and go to `http://localhost:8089` to access the locust w
 
 Here is what the interface should look like when starting a test:
 
-![Locust Start Test](report/example_locust_test.png)
+![Locust Start Test](results/example_locust_test.png)
 
 After starting the test, you will be able to see real-time statistics and charts about the performance of your system, such as the number of requests per second, the response time distribution, and the number of failures.
 #### Test Results

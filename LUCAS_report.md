@@ -58,7 +58,7 @@ These settings can be modified by editing the script or manually adjusting the v
 ### User Management
 Admin users can create and manage user accounts through the Nextcloud web interface. Each user is provided with a private storage space where they can upload, download, and delete files. Admins can also assign users to groups, set storage quotas, and monitor user activity.
 
-In this project, a script named `create_user.sh` was created to automate the creation of multiple user accounts for testing purposes. It generates 100 test users, which will be used for load testing with Locust.
+In this project, a script named `create_user.sh` was created to automate the creation of multiple user accounts for testing purposes. It generates 100 test users with a space quota of 4GB, which will be used for load testing with Locust.
 
 The usernames are in the format `test_userX` while display names are in the format `Test User X`, where `X` is the numeric index of the user (from 1 to 100). The password follows the format `Test_passwordX!`, which complies with the password policy set in the previous section.
 
@@ -68,35 +68,65 @@ It's recommended to run the `delete_files.sh` script before clearing users, as i
 
 ### Locust Testing
 Locust is an open-source load testing tool that allows you to define user behavior in Python code and simulate concurrent users. It provides a web-based interface to monitor the progress of the tests and analyze the results.
-To properly test the system users must already be present on the Nexcloud platform.
+To properly test the system users must already be present on the Nexcloud platform. 
 Since one of the objectives is to test operations such as file uploads, you should first run the `create_test_files.sh` script.This script generates three different sized test files: 1MB, 1KB and 1GB.
 
 The tasks to be perfomed during the simulations are defined in the .py files in the `locust` directory. 
 Common elements across all files include:
 - Authentication (HEAD): Sends a request to verify credentials and server availability.
 - Search (PROPFIND): Lists the contents of the user's root directory.
-- Deletion (DELETE): A small file is added and then immediately deleted (to avoid errors like in cases where a file that is attempted to be deleted does not exist).
+- Deletion (PUT + DELETE): A small file is added and then immediately deleted (to avoid errors like in cases where a file that is attempted to be deleted does not exist).
 - Read (GET): Retrieves the contents of the Readme.md file, which is included by default in every new user’s storage.
 - Upload (PUT): Uploads files of different sizes depending on the load scenario.
 
 Each .py script represents a different load testing scenario:
 - `locust_tasks_light.py`: Lighteight file (1KB) upload tasks are performed at a frequency of 1 to 5 seconds.
 - `locust_tasks_medium.py`: Medium load with a mix of 1KB and 1MB file uploads, with tasks occurring every 1 to 3 seconds.
-- `locust_tasks_heavy.py`: Heavy load with a mix of 1KB, 1MB, and 1GB file uploads, with tasks occurring every 3 to 5 seconds. 
+- `locust_tasks_heavy.py`: Heavy load with a mix of 1KB, 1MB, and 1GB file uploads, with tasks occurring every 2 to 4 seconds. 
+
+Information regarding locust test execution can be found in the project's README file.
+
+### Locust test results
+For the first test (light load), 80 users were simulated over a period of 5 minutes. The spawn rate was set to 1 user per second. The following are plots representing the request per second and response time percentiles.
+
+![LightLoadTest](results/test1.png)
+
+The following are some statistics from the test:
 
 
 
+For the second test (medium load), 80 users were simulated over a period of 5 minutes. The spawn rate was also set to 1 user per second. The results are displayed below:
 
+![MediumLoadTest](results/test2.png)
 
+The following are some statistics from the test:
 
+For the third test (heavy load), 10 users were also simulated over a period of 5 minutes. The spawn rate was set to 1 user per second. 
+Only 10 users were used for this test because the system was not able to handle more concurrent users while uploading large files (1GB). The following are the results:
+
+![HeavyLoadTest](results/test3.png)
+
+The following are some statistics from the test:
 
 
 
 
 ### Scalability
+As observed from the stress tests, as concurrent users, request frequency and file sizes increase the system's performances degrade. To address this, it’s essential to consider scalability strategies that ensure the system remains responsive under higher loads.
 
+In cloud computing there are two main approaches to scalability: vertical and horizontal scaling.
 
+Vertical scaling involves upgrading the existing server's hardware resources, such as increasing CPU, RAM, or storage capacity. This approach is relatively straightforward and can provide immediate performance improvements. However, it has limitations, as there is a maximum capacity that a single server can reach, and it may lead to downtime during the upgrade process.
+Furthermore in the case of failure of the single server, the entire system would be unavailable.
 
+Horizontal scaling, on the other hand, involves adding more servers to distribute the load and increase capacity. This is usually the preferred approach for scalable cloud-native systems. In the context of Docker and Nextcloud, this could mean running multiple instances of the Nextcloud container behind a load balancer, which distributes incoming requests across all available instances.
+
+This last approach offers several advantages:
+- Improved fault tolerance: If one server fails, others can continue to handle requests, ensuring high availability.
+- Better resource utilization: Workloads can be distributed across multiple servers, preventing any single server from becoming a bottleneck.
+- Flexibility: New servers can be added or removed dynamically based on demand.
+- Reduced downtime: Updates and maintenance can be performed on individual servers without affecting the entire system.
+This architecture could be further enhanced by separating out services such as the database (e.g., MariaDB), static file storage (e.g., mounted volumes), and background jobs, allowing each component to scale independently.
 ### Cost Efficiency
 
 
