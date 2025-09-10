@@ -1,6 +1,6 @@
-# ignore the files in the test_files directory
+
 test_files/*
 __pycache__/
 venv/*
 *.csv
-results/*
+scripts/debug.sh

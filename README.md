@@ -88,8 +88,8 @@ To **create** new users you can directly run the shell script `scripts/create_us
 Passwords contain the user index and keep a common prefix and suffix: `Test_password1!`, `Test_password2!`, ..., `Test_password100!`.
 You can modify the number of users to create by changing the `NUMBER_OF_USERS` variable in the script.
 
-Each user will have a private storage of **4GB** by default and will be part of the group `Users`, if you want to change these settings, please refer to the `create_user.sh` script.
-It's important to note that by default some files will be already included in the private storage of each user, such as the Nextcloud manual or default README.md file. This should not affect the storage quota significantly, but it's something to keep in mind. I didn't change this default behavior, also because I used these files later on to test some locust tasks.
+Each user will have a private storage of **4GB** and will be part of the group `Users`, if you want to change these settings, please refer to the `create_user.sh` script.
+It's important to note that by default some files will be already included in the private storage of each user, such as the Nextcloud .pdf manual or the default README.md file. This should not affect the storage quota significantly, but it's something to keep in mind. I didn't change this default behavior, also because I used these files later on to test some locust tasks.
 
 If you want to **delete** users, you can run the `scripts/delete_user.sh` script, which will remove the 100 test users created earlier.
 
@@ -125,7 +125,7 @@ To run locust, use one of the following commands, based on your choice:
 
 Then, open your browser and go to `http://localhost:8089` to access the locust web interface. From there, you can start the test by specifying the number of users, the spawn rate and if you open the advanced options you can also set the run time.
 
-Here is what the interface should look like when starting a test:
+This is what the interface should look like when starting a test:
 
 ![Locust Start Test](results/example_locust_test.png)
 
