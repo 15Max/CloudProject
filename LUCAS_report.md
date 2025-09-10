@@ -25,6 +25,7 @@ In this project Nextcloud and MariaDB were deployed using Docker Compose, which 
 To deploy the system run `docker-compose up -d` in the directory containing the `docker-compose.yml` file. 
 This will start both services in the background. Once the containers are up and running, you can access the Nextcloud web interface by navigating to: `http://localhost:8080`.
 First access can be done with the admin credentials specified in the `.env` file (see Security section for more details).
+For a guided setup of the system and usage instructions, please refer to the README file in the project repository.
 
 ### Security
 Security is a crucial aspect of any cloud-based system, especially when dealing with sensitive data. In this project, some best practices have been intentionally relaxed for demonstration purposes. For example, the .env file containing credentials is included in the GitHub repository. In a real-world deployment, this should be excluded using .gitignore, and credentials should be stored in a secure, encrypted environment.
@@ -33,7 +34,7 @@ After registration, Nextcloud users authenticate via their username and password
 Additionally, user passwords are stored in encrypted form within the Nextcloud database, ensuring that even in the event of a database breach, raw passwords remain protected.
 
 Nextcloud provides several built-in security features, many of which are configurable through the admin interface or via the command line. These include:
-- **Two-factor authentication**: Adds an extra layer of protection by requiring a second form of verification during login.
+- **Two-factor authentication (2FA)**: Adds an extra layer of protection by requiring a second form of verification during login.
 - **Server-side Encryption**: Encrypts files at rest on the server to prevent unauthorized access, even if the storage backend is compromised.
 - **OAuth2**: Allows secure authentication and token-based access using external identity providers (e.g., Google, GitHub).
 - **Logging and monitoring**: Tracks user activity and system events to detect and investigate potential security incidents.
@@ -44,14 +45,14 @@ In this case only the last two security measures were enabled. This is because t
 
 The password policy can be directly configured by running the `password_security.sh` script. You can directly verify these settings using the `test_password_security.sh` script, which attempts weak password resets and multiple failed logins to test enforcement.
 
-In addition to the default settings of Nextcloud, which check for commonly used passwords and ensure they are not found in the *haveibeenpwned* database of compromised passwords, this script will configure some security measures to create stronger passwords and protect user accounts.
+In addition to the default settings of Nextcloud, which check for commonly used passwords and also ensure they are not found in the *haveibeenpwned* database of compromised passwords, this script will configure some security measures to create stronger passwords and protect user accounts.
 The password policy enforced by this script includes:
 - Minimum password length set to 10 characters 
 - Inclusion of both uppercase and lowercase letters
 - Inclusion of at least one number
 - Inclusion of at least one special character
 
-Additionally accounts will be locked after **5 failed login attempts** and must be unlocked by an admin. Also **password expiration** is set to **30 days**, after which users will be prompted to change their password.
+Furthermore, accounts will be locked after **5 failed login attempts** and must be unlocked by an admin. Also **password expiration** is set to **30 days**, after which users will be prompted to change their password.
 
 These settings can be modified by editing the script or manually adjusting the values in the Nextcloud admin interface . The same goes for the other types of security measures mentioned above. *For production deployments, it is strongly recommended to enable 2FA and encryption and use OAuth2 for improved access control.*
 
@@ -60,36 +61,52 @@ Admin users can create and manage user accounts through the Nextcloud web interf
 
 In this project, a script named `create_user.sh` was created to automate the creation of multiple user accounts for testing purposes. It generates 100 test users with a space quota of 4GB, which will be used for load testing with Locust.
 
-The usernames are in the format `test_userX` while display names are in the format `Test User X`, where `X` is the numeric index of the user (from 1 to 100). The password follows the format `Test_passwordX!`, which complies with the password policy set in the previous section.
+The usernames are in the format `test_userX`, while display names are in the format `Test User X`, where `X` is the numeric index of the user (from 1 to 100). The password follows the format `Test_passwordX!`, which complies with the password policy set in the previous section.
 
 Deletion of users can be done manually through the admin interface or by using the `delete_user.sh` script, which removes all test users created by the `create_user.sh` script.
 
 It's recommended to run the `delete_files.sh` script before clearing users, as it will delete all files uploaded by the test users, helping free up storage and keep the environment clean.
 
 ### Locust Testing
-Locust is an open-source load testing tool that allows you to define user behavior in Python code and simulate concurrent users. It provides a web-based interface to monitor the progress of the tests and analyze the results.
-To properly test the system users must already be present on the Nexcloud platform. 
-Since one of the objectives is to test operations such as file uploads, you should first run the `create_test_files.sh` script.This script generates three different sized test files: 1MB, 1KB and 1GB.
+Locust is an open-source load testing tool that allows you to define user behavior in Python code and simulate concurrent users. It provides a web-based interface for monitoring test progress and analyzing results.
 
-The tasks to be perfomed during the simulations are defined in the .py files in the `locust` directory. 
+To run tests effectively, all test users must already exist on the Nextcloud platform, this can be done through the `create_user.sh` script, previously discussed. Since some scenarios involve file uploads, you should also first run the `create_test_files.sh` script. This script generates three test files of different sizes: 1KB, 1MB, and 1GB.
+
+
+The tasks to be performed during user behavior simulations are defined in the .py files in the `locust` directory.
 Common elements across all files include:
-- Authentication (HEAD): Sends a request to verify credentials and server availability.
-- Search (PROPFIND): Lists the contents of the user's root directory.
-- Deletion (PUT + DELETE): A small file is added and then immediately deleted (to avoid errors like in cases where a file that is attempted to be deleted does not exist).
-- Read (GET): Retrieves the contents of the Readme.md file, which is included by default in every new user’s storage.
-- Upload (PUT): Uploads files of different sizes depending on the load scenario.
 
-Each .py script represents a different load testing scenario:
-- `locust_tasks_light.py`: Lighteight file (1KB) upload tasks are performed at a frequency of 1 to 5 seconds.
-- `locust_tasks_medium.py`: Medium load with a mix of 1KB and 1MB file uploads, with tasks occurring every 1 to 3 seconds.
+- Authentication (HEAD): Verifies user credentials and server availability.
+- Search (PROPFIND): Lists the contents of the user's root directory.
+- Deletion (PUT + DELETE): Uploads a temporary file and then immediately deletes it, ensuring the file exists before deletion and avoiding errors.
+- Read (GET): Retrieves the contents of the Readme.md file, which is included by default in every new user’s storage.
+- Upload (PUT): Uploads files of various sizes, depending on the load scenario.
+
+Tasks are assigned weights using the @task(X) decorator, where X determines how frequently a task is performed relative to others. This allows the simulation to reflect realistic usage patterns, where some actions (like file uploads) are more common than others. You can inspect task weights directly in the Python files.
+
+The on_start and on_stop methods, also shared across all test scripts, manage user setup and cleanup.
+
+
+The on_start method initializes each virtual user by assigning them a random username and password from the test pool and sets up an empty list uploaded_files to track the paths of uploaded files during the test. This ensures each user simulates realistic, independent behavior.
+The on_stop method is triggered when the user session ends. It iterates over all uploaded file paths and deletes them, preventing leftover test data from accumulating on the server.
+This ensures the system stays clean between tests, improving result accuracy and repeatability.
+
+To avoid conflicts and file locking issues, each uploaded file is assigned a unique name using a random index (e.g., file1KB_234565). Initially, using the same filenames led to 423 Locked errors (e.g., HTTPError('423 Client Error: Locked for url: PUT /upload')) due to concurrent write attempts. This was mitigated by introducing randomized file names and ensuring cleanup via on_stop method.
+
+Each .py script corresponds to a different load testing scenario:
+- `locust_tasks_light.py`: Light load with 1KB file uploads, with tasks occurring every 2 to 4 seconds.
+- `locust_tasks_medium.py`: Medium load with a mix of 1KB and 1MB file uploads, with tasks occurring every 1 to 2 seconds.
 - `locust_tasks_heavy.py`: Heavy load with a mix of 1KB, 1MB, and 1GB file uploads, with tasks occurring every 2 to 4 seconds. 
+
+Only the weights of upload tasks vary across these scripts to simulate different load intensities. All other task weights remain constant.
+
 
 Information regarding locust test execution can be found in the project's README file.
 
 ### Locust test results
 For the first test (light load), 80 users were simulated over a period of 5 minutes. The spawn rate was set to 1 user per second. The following are plots representing the request per second and response time percentiles.
 
-![LightLoadTest](results/test1.png)
+![LightLoadTest](results/light.png)
 
 The following are some statistics from the test:
 
@@ -97,14 +114,14 @@ The following are some statistics from the test:
 
 For the second test (medium load), 80 users were simulated over a period of 5 minutes. The spawn rate was also set to 1 user per second. The results are displayed below:
 
-![MediumLoadTest](results/test2.png)
+![MediumLoadTest](results/medium.png)
 
 The following are some statistics from the test:
 
 For the third test (heavy load), 10 users were also simulated over a period of 5 minutes. The spawn rate was set to 1 user per second. 
 Only 10 users were used for this test because the system was not able to handle more concurrent users while uploading large files (1GB). The following are the results:
 
-![HeavyLoadTest](results/test3.png)
+![HeavyLoadTest](results/heavy.png)
 
 The following are some statistics from the test:
 
