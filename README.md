@@ -145,4 +145,4 @@ In the [results](results) folder you can find a selection of graphs and statisti
 ## Author
 [**Marta Lucas**](https://github.com/15Max)
 
-Check out the [presentation](https://github.com/15Max/CloudProject/presentation) for a quick overview of the project.  #TODO add correct link
+Check out the [presentation](https://github.com/15Max/CloudProject/presentation.pdf) for a quick overview of the project.  
